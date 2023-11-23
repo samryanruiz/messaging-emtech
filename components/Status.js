@@ -19,12 +19,14 @@ export default class Status extends Component {
 
 
   componentDidMount() {
-    NetInfo.addEventListener(this.handleConnectivityChange);
+    this.unsubscribeNetInfo = NetInfo.addEventListener(this.handleConnectivityChange);
   }
 
 
   componentWillUnmount() {
-    NetInfo.removeEventListener(this.handleConnectivityChange);
+    if (this.unsubscribeNetInfo) {
+      this.unsubscribeNetInfo();
+    }
   }
 
 
