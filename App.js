@@ -9,6 +9,8 @@ import {
   TouchableHighlight,
   BackHandler,
 } from "react-native";
+import * as Location from "expo-location";
+
 import Status from "./components/Status";
 import Toolbar from "./components/Toolbar";
 import MessageList from "./components/Messagelist";
@@ -98,12 +100,31 @@ export default class App extends React.Component {
   handlePressToolbarCamera = () => {
     // ...
   };
+
   handlePressToolbarLocation = () => {
-    // ...
+    const { messages } = this.state;
+    Location.installWebGeolocationPolyfill();
+    navigator.geolocation.getCurrentPosition((position) => {
+      const {
+        coords: { latitude, longitude },
+      } = position;
+      this.setState({
+        messages: [
+          createLocationMessage({
+            latitude,
+            longitude,
+          }),
+          ...messages,
+        ],
+      });
+    });
   };
+
+  
   handleChangeFocus = (isFocused) => {
     this.setState({ isInputFocused: isFocused });
   };
+  
   handleSubmit = (text) => {
     const { messages } = this.state;
     this.setState({
@@ -194,7 +215,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     backgroundColor: "black",
-    zIndex: 1000, // Ensure it covers other components
+    zIndex: 1000, 
     justifyContent: "center",
     alignItems: "center",
   },
